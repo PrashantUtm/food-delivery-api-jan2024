@@ -23,8 +23,25 @@ const getMockedDelivery = ((req, res) => {
     res.json(delivery);
 });
 
+const updateMockedDelivery = ((req, res) => {
+    const id = String(req.params.id);
+    const delivery = deliveries.find(delivery => delivery?.id == id);
+    if (!delivery) {
+        return res.status(404).send('Delivery not found');
+    }
+    const updatedDelivery = req.body;
+    delivery.status = updatedDelivery.status;
+    delivery.assignedDriverId = updatedDelivery.assignedDriverId;
+    delivery['feedback'] = updatedDelivery.feedback;
+    delivery['paymentMethod'] = updatedDelivery.paymentMethod;
+    delivery['paymentStatus'] = updatedDelivery.paymentStatus;
+    delivery['proofOfDelivery'] = updatedDelivery.proofOfDelivery;
+    res.json(delivery);
+});
+
 module.exports = {
     getMockedDeliveries,
     getMockedDriverDeliveries,
-    getMockedDelivery
+    getMockedDelivery,
+    updateMockedDelivery
 }

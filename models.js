@@ -27,7 +27,8 @@ const deliverySchema = new mongoose.Schema({
     },
     proofOfDelivery: String,
     feedback: String,
-    status: String
+    status: String,
+    id: String
 });
 
 const Delivery = mongoose.model('Delivery', deliverySchema);

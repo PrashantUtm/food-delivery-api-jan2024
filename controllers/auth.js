@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken');
 const { Driver } = require('../models.js');
 const drivers = require('../data/drivers.js');
+const bcrypt = require('bcryptjs');
+
+const saltRounds = 10;
 const jwtSecret = '6b49b1141686633a0884ca3688723e6758461c0c17b9e57490586dd7ec5817df699310';
 
 const login = async (req, res, next) => {
-    const { username } = req.body
+    const { username, password } = req.body
     // Check if username provided
     if (!username) {
         return res.status(400).json({
@@ -20,7 +23,7 @@ const login = async (req, res, next) => {
           const isMatch = await bcrypt.compare(password, driver.password);
           if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
         } else {
-          driver = drivers.find(u => u.id === username)
+          driver = drivers.find(u => u.id === username && u.id === password)
         }
         
         if (!driver) {
@@ -42,7 +45,7 @@ const login = async (req, res, next) => {
                 maxAge: maxAge * 1000, // 24hrs in ms
             });
             res.status(201).json({
-                user: driver.id,
+                user: driver.username,
                 token: token
             });
         }
@@ -85,8 +88,27 @@ const auth = (req, res, next) => {
     }
   }
 
+const getDrivers = ((req, res) => {
+    Driver.find({})
+        .then(result => res.status(200).json(result))
+        .catch(error => res.status(500).json({msg: error}));
+});
+
+const createDriver = ((req, res) => {
+  const newDriver = req.body;
+  bcrypt.hash(newDriver.password, saltRounds, function(err, hash) {
+    newDriver.password = hash;
+    Driver.create(newDriver)
+        .then(result => res.status(201).json({ result }))
+        .catch((error) => res.status(500).json({msg:  error }));
+  });
+  
+});
+
 module.exports = {
     login,
     auth,
-    getUserId
+    getUserId,
+    getDrivers,
+    createDriver
 };
