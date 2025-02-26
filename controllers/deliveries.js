@@ -3,6 +3,7 @@ const { randomUUID } = require('crypto');
 const { getUserId } = require('./auth');
 
 const getAllDeliveries = async (req, res) => {
+    console.log('fetching deliveries');
     try {
         const deliveries = await Delivery.find({ assignedDriverId: null });
         //const mappedDeliveries = deliveries.map(delivery => ({ ...delivery, id: delivery._id }));
@@ -53,7 +54,7 @@ const updateDelivery = async (req, res) => {
             delivery.assignedDriverId = null;
         }
 
-        if (updatedDelivery.status === 3) {
+        if (updatedDelivery.status === 2) {
             delivery['feedback'] = updatedDelivery.feedback;
             delivery['paymentMethod'] = updatedDelivery.paymentMethod;
             delivery['paymentStatus'] = updatedDelivery.paymentStatus;
@@ -67,6 +68,7 @@ const updateDelivery = async (req, res) => {
 }
 
 const createDelivery = ((req, res) => {
+    console.log('creating delivery');
     const newDelivery = req.body;
     if (!validateDelivery(newDelivery)) {
         return res.status(400).json('Missing required data')

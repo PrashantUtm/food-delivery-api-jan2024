@@ -42,4 +42,4 @@ const { auth } = require('./controllers/auth.js');
 
 app.use('/api/login', auth_routes);
 app.use('/api/mocks', auth, mocked_routes);
-app.use('/api/deliveries', deliveries_routes);
+app.use('/api/deliveries', auth, deliveries_routes);
